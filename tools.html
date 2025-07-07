@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOC Analyst Tools Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: #00d4ff;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            color: #b0b0b0;
+        }
+
+        .search-container {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .search-box {
+            width: 100%;
+            max-width: 500px;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            color: #fff;
+            font-size: 16px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .search-box::placeholder {
+            color: #888;
+        }
+
+        .category {
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .category:hover {
+            transform: translateY(-5px);
+        }
+
+        .category h2 {
+            color: #00d4ff;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .category-icon {
+            font-size: 1.2em;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .tool-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-card:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: #00d4ff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.2);
+        }
+
+        .tool-card h3 {
+            color: #fff;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .tool-card p {
+            color: #b0b0b0;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .tool-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tool-link {
+            padding: 8px 16px;
+            background: linear-gradient(45deg, #00d4ff, #0099cc);
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 0.85em;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .tool-link:hover {
+            background: linear-gradient(45deg, #0099cc, #00d4ff);
+            transform: scale(1.05);
+        }
+
+        .tool-link.demo {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+        }
+
+        .tool-link.demo:hover {
+            background: linear-gradient(45deg, #ee5a24, #ff6b6b);
+        }
+
+        .tool-link.free {
+            background: linear-gradient(45deg, #00d084, #00a65a);
+        }
+
+        .tool-link.free:hover {
+            background: linear-gradient(45deg, #00a65a, #00d084);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-number {
+            font-size: 2em;
+            color: #00d4ff;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            color: #b0b0b0;
+            margin-top: 5px;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: #00d4ff;
+            border-color: #00d4ff;
+            color: #000;
+        }
+
+        @media (max-width: 768px) {
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ SOC Analyst Tools Dashboard</h1>
+            <p>Your comprehensive cybersecurity toolkit for threat detection, analysis, and response</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalTools">85+</div>
+                <div class="stat-label">Total Tools</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">12</div>
+                <div class="stat-label">Categories</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">25+</div>
+                <div class="stat-label">Free/Open Source</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">SOC Ready</div>
+            </div>
+        </div>
+
+        <div class="search-container">
+            <input type="text" id="searchBox" class="search-box" placeholder="Search tools by name, category, or description...">
+        </div>
+
+        <div class="filter-buttons">
+            <button class="filter-btn active" onclick="filterTools('all')">All Tools</button>
+            <button class="filter-btn" onclick="filterTools('free')">Free/Open Source</button>
+            <button class="filter-btn" onclick="filterTools('commercial')">Commercial</button>
+            <button class="filter-btn" onclick="filterTools('cloud')">Cloud-Based</button>
+        </div>
+
+        <div id="toolsContainer">
+            <!-- SIEM Tools -->
+            <div class="category" data-category="siem">
+                <h2><span class="category-icon">📊</span>SIEM (Security Information and Event Management)</h2>
+                <div class="tools-grid">
+                    <div class="tool-card" data-type="commercial">
+                        <h3>Splunk Enterprise Security</h3>
+                        <p>Industry-leading SIEM platform for security monitoring and analytics</p>
+                        <div class="tool-links">
+                            <a href="https://www.splunk.com/en_us/products/enterprise-security.html" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://www.splunk.com/en_us/download/splunk-enterprise.html" class="tool-link demo" target="_blank">🎯 Free Trial</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>IBM QRadar</h3>
+                        <p>AI-powered SIEM solution for threat detection and response</p>
+                        <div class="tool-links">
+                            <a href="https://www.ibm.com/qradar" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://www.ibm.com/account/reg/signup?formid=urx-19776" class="tool-link demo" target="_blank">🎯 Free Trial</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="cloud">
+                        <h3>Microsoft Sentinel</h3>
+                        <p>Cloud-native SIEM and SOAR solution from Microsoft</p>
+                        <div class="tool-links">
+                            <a href="https://azure.microsoft.com/en-us/products/microsoft-sentinel/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://portal.azure.com" class="tool-link demo" target="_blank">🎯 Azure Portal</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="free">
+                        <h3>Elastic Security</h3>
+                        <p>Open-source SIEM with powerful search and analytics capabilities</p>
+                        <div class="tool-links">
+                            <a href="https://www.elastic.co/security" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://www.elastic.co/downloads/" class="tool-link free" target="_blank">⚡ Free Download</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>LogRhythm</h3>
+                        <p>NextGen SIEM platform with integrated UEBA and SOAR</p>
+                        <div class="tool-links">
+                            <a href="https://logrhythm.com/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://logrhythm.com/try-logrhythm/" class="tool-link demo" target="_blank">🎯 Request Demo</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>ArcSight</h3>
+                        <p>Enterprise SIEM solution by Micro Focus</p>
+                        <div class="tool-links">
+                            <a href="https://www.microfocus.com/en-us/cyberres/secops/arcsight-esm" class="tool-link" target="_blank">🔗 Official Site</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAR Tools -->
+            <div class="category" data-category="soar">
+                <h2><span class="category-icon">🤖</span>SOAR (Security Orchestration, Automation, and Response)</h2>
+                <div class="tools-grid">
+                    <div class="tool-card" data-type="commercial">
+                        <h3>Splunk SOAR (Phantom)</h3>
+                        <p>Security orchestration and automated response platform</p>
+                        <div class="tool-links">
+                            <a href="https://www.splunk.com/en_us/products/splunk-security-orchestration-automation-and-response.html" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://www.splunk.com/en_us/download/splunk-soar.html" class="tool-link demo" target="_blank">🎯 Free Trial</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>Palo Alto Cortex XSOAR</h3>
+                        <p>Security orchestration, automation and response platform</p>
+                        <div class="tool-links">
+                            <a href="https://www.paloaltonetworks.com/cortex/xsoar" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://www.paloaltonetworks.com/cortex/xsoar/get-started" class="tool-link demo" target="_blank">🎯 Request Demo</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>IBM Resilient</h3>
+                        <p>Incident response platform with automation capabilities</p>
+                        <div class="tool-links">
+                            <a href="https://www.ibm.com/qradar/resilient" class="tool-link" target="_blank">🔗 Official Site</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>Swimlane</h3>
+                        <p>Low-code security automation and orchestration platform</p>
+                        <div class="tool-links">
+                            <a href="https://swimlane.com/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://swimlane.com/demo/" class="tool-link demo" target="_blank">🎯 Request Demo</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="free">
+                        <h3>TheHive</h3>
+                        <p>Open-source incident response platform</p>
+                        <div class="tool-links">
+                            <a href="https://thehive-project.org/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://github.com/TheHive-Project/TheHive" class="tool-link free" target="_blank">⚡ GitHub</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EDR Tools -->
+            <div class="category" data-category="edr">
+                <h2><span class="category-icon">💻</span>Endpoint Detection and Response (EDR)</h2>
+                <div class="tools-grid">
+                    <div class="tool-card" data-type="commercial">
+                        <h3>CrowdStrike Falcon</h3>
+                        <p>Cloud-native endpoint protection platform</p>
+                        <div class="tool-links">
+                            <a href="https://www.crowdstrike.com/products/endpoint-security/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://www.crowdstrike.com/free-trial-guide/" class="tool-link demo" target="_blank">🎯 Free Trial</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>SentinelOne</h3>
+                        <p>AI-powered autonomous endpoint protection</p>
+                        <div class="tool-links">
+                            <a href="https://www.sentinelone.com/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://www.sentinelone.com/free-trial/" class="tool-link demo" target="_blank">🎯 Free Trial</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>Microsoft Defender for Endpoint</h3>
+                        <p>Enterprise endpoint security solution</p>
+                        <div class="tool-links">
+                            <a href="https://www.microsoft.com/en-us/security/business/endpoint-security/microsoft-defender-endpoint" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://www.microsoft.com/en-us/security/business/endpoint-security/microsoft-defender-endpoint/free-trial" class="tool-link demo" target="_blank">🎯 Free Trial</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>VMware Carbon Black</h3>
+                        <p>Cloud-native endpoint protection and workload security</p>
+                        <div class="tool-links">
+                            <a href="https://www.vmware.com/products/carbon-black.html" class="tool-link" target="_blank">🔗 Official Site</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>BlackBerry Cylance</h3>
+                        <p>AI-driven endpoint security and threat prevention</p>
+                        <div class="tool-links">
+                            <a href="https://www.blackberry.com/us/en/products/cylance-endpoint-security" class="tool-link" target="_blank">🔗 Official Site</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NDR Tools -->
+            <div class="category" data-category="ndr">
+                <h2><span class="category-icon">🌐</span>Network Detection and Response (NDR)</h2>
+                <div class="tools-grid">
+                    <div class="tool-card" data-type="commercial">
+                        <h3>Darktrace</h3>
+                        <p>AI-powered network security and threat detection</p>
+                        <div class="tool-links">
+                            <a href="https://www.darktrace.com/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://www.darktrace.com/en/contact/" class="tool-link demo" target="_blank">🎯 Request Demo</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>ExtraHop</h3>
+                        <p>Network detection and response with wire data analytics</p>
+                        <div class="tool-links">
+                            <a href="https://www.extrahop.com/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://www.extrahop.com/demo/" class="tool-link demo" target="_blank">🎯 Request Demo</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>Vectra AI</h3>
+                        <p>AI-driven threat detection and response</p>
+                        <div class="tool-links">
+                            <a href="https://www.vectra.ai/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://www.vectra.ai/get-a-demo" class="tool-link demo" target="_blank">🎯 Request Demo</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>Corelight</h3>
+                        <p>Network security monitoring and analytics</p>
+                        <div class="tool-links">
+                            <a href="https://corelight.com/" class="tool-link" target="_blank">🔗 Official Site</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="free">
+                        <h3>Zeek (Bro)</h3>
+                        <p>Open-source network security monitoring framework</p>
+                        <div class="tool-links">
+                            <a href="https://zeek.org/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://github.com/zeek/zeek" class="tool-link free" target="_blank">⚡ GitHub</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vulnerability Management -->
+            <div class="category" data-category="vulnerability">
+                <h2><span class="category-icon">🔍</span>Vulnerability Management</h2>
+                <div class="tools-grid">
+                    <div class="tool-card" data-type="commercial">
+                        <h3>Tenable Nessus</h3>
+                        <p>Comprehensive vulnerability scanner</p>
+                        <div class="tool-links">
+                            <a href="https://www.tenable.com/products/nessus" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://www.tenable.com/products/nessus/nessus-essentials" class="tool-link demo" target="_blank">🎯 Free Version</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>Qualys VMDR</h3>
+                        <p>Cloud-based vulnerability management</p>
+                        <div class="tool-links">
+                            <a href="https://www.qualys.com/apps/vulnerability-management-detection-response/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://www.qualys.com/free-trial/" class="tool-link demo" target="_blank">🎯 Free Trial</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>Rapid7 InsightVM</h3>
+                        <p>Risk-based vulnerability management</p>
+                        <div class="tool-links">
+                            <a href="https://www.rapid7.com/products/insightvm/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://www.rapid7.com/try/insightvm/" class="tool-link demo" target="_blank">🎯 Free Trial</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="free">
+                        <h3>OpenVAS</h3>
+                        <p>Open-source vulnerability scanner</p>
+                        <div class="tool-links">
+                            <a href="https://www.openvas.org/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://github.com/greenbone/openvas" class="tool-link free" target="_blank">⚡ GitHub</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>Greenbone</h3>
+                        <p>Vulnerability management solutions</p>
+                        <div class="tool-links">
+                            <a href="https://www.greenbone.net/" class="tool-link" target="_blank">🔗 Official Site</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Threat Intelligence -->
+            <div class="category" data-category="threat-intel">
+                <h2><span class="category-icon">🧠</span>Threat Intelligence Platforms</h2>
+                <div class="tools-grid">
+                    <div class="tool-card" data-type="free">
+                        <h3>MISP</h3>
+                        <p>Open-source threat intelligence and sharing platform</p>
+                        <div class="tool-links">
+                            <a href="https://www.misp-project.org/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://github.com/MISP/MISP" class="tool-link free" target="_blank">⚡ GitHub</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>ThreatConnect</h3>
+                        <p>Threat intelligence platform with automation</p>
+                        <div class="tool-links">
+                            <a href="https://threatconnect.com/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://threatconnect.com/free-trial/" class="tool-link demo" target="_blank">🎯 Free Trial</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>Anomali</h3>
+                        <p>Threat intelligence management platform</p>
+                        <div class="tool-links">
+                            <a href="https://www.anomali.com/" class="tool-link" target="_blank">🔗 Official Site</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>Recorded Future</h3>
+                        <p>Real-time threat intelligence platform</p>
+                        <div class="tool-links">
+                            <a href="https://www.recordedfuture.com/" class="tool-link" target="_blank">🔗 Official Site</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>IBM X-Force</h3>
+                        <p>Threat intelligence and security research</p>
+                        <div class="tool-links">
+                            <a href="https://www.ibm.com/security/xforce" class="tool-link" target="_blank">🔗 Official Site</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Digital Forensics -->
+            <div class="category" data-category="forensics">
+                <h2><span class="category-icon">🔬</span>Digital Forensics and Malware Analysis</h2>
+                <div class="tools-grid">
+                    <div class="tool-card" data-type="free">
+                        <h3>Volatility</h3>
+                        <p>Advanced memory forensics framework</p>
+                        <div class="tool-links">
+                            <a href="https://www.volatilityfoundation.org/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://github.com/volatilityfoundation/volatility3" class="tool-link free" target="_blank">⚡ GitHub</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="free">
+                        <h3>Autopsy</h3>
+                        <p>Digital forensics platform and GUI for The Sleuth Kit</p>
+                        <div class="tool-links">
+                            <a href="https://www.autopsy.com/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://github.com/sleuthkit/autopsy" class="tool-link free" target="_blank">⚡ GitHub</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="free">
+                        <h3>Wireshark</h3>
+                        <p>Network protocol analyzer and packet capture tool</p>
+                        <div class="tool-links">
+                            <a href="https://www.wireshark.org/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://www.wireshark.org/download.html" class="tool-link free" target="_blank">⚡ Download</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="free">
+                        <h3>Ghidra</h3>
+                        <p>NSA's reverse engineering framework</p>
+                        <div class="tool-links">
+                            <a href="https://ghidra-sre.org/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://github.com/NationalSecurityAgency/ghidra" class="tool-link free" target="_blank">⚡ GitHub</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="free">
+                        <h3>Cuckoo Sandbox</h3>
+                        <p>Automated malware analysis sandbox</p>
+                        <div class="tool-links">
+                            <a href="https://cuckoosandbox.org/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://github.com/cuckoosandbox/cuckoo" class="tool-link free" target="_blank">⚡ GitHub</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>Any.run</h3>
+                        <p>Online malware analysis sandbox</p>
+                        <div class="tool-links">
+                            <a href="https://any.run/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://any.run/" class="tool-link demo" target="_blank">🎯 Free Analysis</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Email Security -->
+            <div class="category" data-category="email">
+                <h2><span class="category-icon">📧</span>Email Security</h2>
+                <div class="tools-grid">
+                    <div class="tool-card" data-type="commercial">
+                        <h3>Proofpoint</h3>
+                        <p>Enterprise email security and threat protection</p>
+                        <div class="tool-links">
+                            <a href="https://www.proofpoint.com/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://www.proofpoint.com/us/request-demo" class="tool-link demo" target="_blank">🎯 Request Demo</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>Mimecast</h3>
+                        <p>Email security and cyber resilience platform</p>
+                        <div class="tool-links">
+                            <a href="https://www.mimecast.com/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://www.mimecast.com/request-demo/" class="tool-link demo" target="_blank">🎯 Request Demo</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>Microsoft Defender for Office 365</h3>
+                        <p>Cloud-based email filtering and protection</p>
+                        <div class="tool-links">
+                            <a href="https://www.microsoft.com/en-us/security/business/email-security/microsoft-defender-office-365" class="tool-link" target="_blank">🔗 Official Site</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>Cofense</h3>
+                        <p>Phishing detection and response platform</p>
+                        <div class="tool-links">
+                            <a href="https://cofense.com/" class="tool-link" target="_blank">🔗 Official Site</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>KnowBe4</h3>
+                        <p>Security awareness training and phishing simulation</p>
+                        <div class="tool-links">
+                            <a href="https://www.knowbe4.com/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://www.knowbe4.com/free-phishing-security-test" class="tool-link demo" target="_blank">🎯 Free Test</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Web and DNS Security -->
+            <div class="category" data-category="web-dns">
+                <h2><span class="category-icon">🔐</span>Web and DNS Security</h2>
+                <div class="tools-grid">
+                    <div class="tool-card" data-type="commercial">
+                        <h3>Cisco Umbrella</h3>
+                        <p>Cloud-delivered network security and DNS filtering</p>
+                        <div class="tool-links">
+                            <a href="https://umbrella.cisco.com/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://umbrella.cisco.com/free-trial" class="tool-link demo" target="_blank">🎯 Free Trial</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>Zscaler</h3>
+                        <p>Cloud-native security service edge platform</p>
+                        <div class="tool-links">
+                            <a href="https://www.zscaler.com/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://www.zscaler.com/demo" class="tool-link demo" target="_blank">🎯 Request Demo</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>Palo Alto Prisma Access</h3>
+                        <p>Cloud-based network security platform</p>
+                        <div class="tool-links">
+                            <a href="https://www.paloaltonetworks.com/prisma/access" class="tool-link" target="_blank">🔗 Official Site</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>Cloudflare for Teams</h3>
+                        <p>Zero trust network security and web filtering</p>
+                        <div class="tool-links">
+                            <a href="https://www.cloudflare.com/teams/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://dash.cloudflare.com/sign-up/teams" class="tool-link demo" target="_blank">🎯 Free Plan</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>Infoblox</h3>
+                        <p>DNS, DHCP, and IP address management (DDI)</p>
+                        <div class="tool-links">
+                            <a href="https://www.infoblox.com/" class="tool-link" target="_blank">🔗 Official Site</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cloud Security -->
+            <div class="category" data-category="cloud">
+                <h2><span class="category-icon">☁️</span>Cloud Security</h2>
+                <div class="tools-grid">
+                    <div class="tool-card" data-type="cloud">
+                        <h3>AWS Security Hub</h3>
+                        <p>Centralized security findings management for AWS</p>
+                        <div class="tool-links">
+                            <a href="https://aws.amazon.com/security-hub/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://console.aws.amazon.com/securityhub/" class="tool-link demo" target="_blank">🎯 AWS Console</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="cloud">
+                        <h3>Microsoft Defender for Cloud</h3>
+                        <p>Cloud security posture management for Azure</p>
+                        <div class="tool-links">
+                            <a href="https://azure.microsoft.com/en-us/products/defender-for-cloud/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://portal.azure.com/" class="tool-link demo" target="_blank">🎯 Azure Portal</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="cloud">
+                        <h3>Google Cloud Security Command Center</h3>
+                        <p>Centralized security management for Google Cloud</p>
+                        <div class="tool-links">
+                            <a href="https://cloud.google.com/security-command-center" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://console.cloud.google.com/" class="tool-link demo" target="_blank">🎯 GCP Console</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>Prisma Cloud</h3>
+                        <p>Cloud native security platform by Palo Alto</p>
+                        <div class="tool-links">
+                            <a href="https://www.paloaltonetworks.com/prisma/cloud" class="tool-link" target="_blank">🔗 Official Site</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>Lacework</h3>
+                        <p>Cloud security platform with behavioral analysis</p>
+                        <div class="tool-links">
+                            <a href="https://www.lacework.com/" class="tool-link" target="_blank">🔗 Official Site</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Specialized Analysis Tools -->
+            <div class="category" data-category="analysis">
+                <h2><span class="category-icon">🔎</span>Specialized Analysis Tools</h2>
+                <div class="tools-grid">
+                    <div class="tool-card" data-type="free">
+                        <h3>VirusTotal</h3>
+                        <p>Online malware analysis and threat intelligence</p>
+                        <div class="tool-links">
+                            <a href="https://www.virustotal.com/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://www.virustotal.com/gui/home/upload" class="tool-link free" target="_blank">⚡ Analyze Files</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="free">
+                        <h3>Shodan</h3>
+                        <p>Search engine for internet-connected devices</p>
+                        <div class="tool-links">
+                            <a href="https://www.shodan.io/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://account.shodan.io/register" class="tool-link demo" target="_blank">🎯 Free Account</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="free">
+                        <h3>Censys</h3>
+                        <p>Internet scanning and attack surface management</p>
+                        <div class="tool-links">
+                            <a href="https://censys.io/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://search.censys.io/" class="tool-link free" target="_blank">⚡ Search</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="free">
+                        <h3>URLVoid</h3>
+                        <p>URL reputation and safety checker</p>
+                        <div class="tool-links">
+                            <a href="https://www.urlvoid.com/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://www.urlvoid.com/" class="tool-link free" target="_blank">⚡ Check URLs</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="commercial">
+                        <h3>Maltego</h3>
+                        <p>OSINT and link analysis tool</p>
+                        <div class="tool-links">
+                            <a href="https://www.maltego.com/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://www.maltego.com/ce-registration/" class="tool-link demo" target="_blank">🎯 Free Version</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="free">
+                        <h3>Hybrid Analysis</h3>
+                        <p>Free malware analysis service</p>
+                        <div class="tool-links">
+                            <a href="https://www.hybrid-analysis.com/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://www.hybrid-analysis.com/" class="tool-link free" target="_blank">⚡ Analyze Files</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Network Tools -->
+            <div class="category" data-category="network">
+                <h2><span class="category-icon">🌐</span>Network Analysis Tools</h2>
+                <div class="tools-grid">
+                    <div class="tool-card" data-type="free">
+                        <h3>Nmap</h3>
+                        <p>Network discovery and security auditing tool</p>
+                        <div class="tool-links">
+                            <a href="https://nmap.org/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://nmap.org/download.html" class="tool-link free" target="_blank">⚡ Download</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="free">
+                        <h3>Masscan</h3>
+                        <p>Fast port scanner for large networks</p>
+                        <div class="tool-links">
+                            <a href="https://github.com/robertdavidgraham/masscan" class="tool-link" target="_blank">🔗 GitHub</a>
+                            <a href="https://github.com/robertdavidgraham/masscan" class="tool-link free" target="_blank">⚡ Download</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="free">
+                        <h3>Netcat</h3>
+                        <p>Network utility for reading/writing network connections</p>
+                        <div class="tool-links">
+                            <a href="https://nc110.sourceforge.io/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://nc110.sourceforge.io/" class="tool-link free" target="_blank">⚡ Download</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="free">
+                        <h3>Tcpdump</h3>
+                        <p>Command-line packet analyzer</p>
+                        <div class="tool-links">
+                            <a href="https://www.tcpdump.org/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://www.tcpdump.org/" class="tool-link free" target="_blank">⚡ Download</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="free">
+                        <h3>OWASP Nettacker</h3>
+                        <p>Automated penetration testing framework</p>
+                        <div class="tool-links">
+                            <a href="https://github.com/OWASP/Nettacker" class="tool-link" target="_blank">🔗 GitHub</a>
+                            <a href="https://github.com/OWASP/Nettacker" class="tool-link free" target="_blank">⚡ Download</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Operating Systems -->
+            <div class="category" data-category="os">
+                <h2><span class="category-icon">🖥️</span>Security-Focused Operating Systems</h2>
+                <div class="tools-grid">
+                    <div class="tool-card" data-type="free">
+                        <h3>Kali Linux</h3>
+                        <p>Debian-based penetration testing distribution</p>
+                        <div class="tool-links">
+                            <a href="https://www.kali.org/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://www.kali.org/get-kali/" class="tool-link free" target="_blank">⚡ Download</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="free">
+                        <h3>Parrot Security OS</h3>
+                        <p>Security-focused Linux distribution</p>
+                        <div class="tool-links">
+                            <a href="https://www.parrotsec.org/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://www.parrotsec.org/download/" class="tool-link free" target="_blank">⚡ Download</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="free">
+                        <h3>SANS SIFT</h3>
+                        <p>Digital forensics and incident response toolkit</p>
+                        <div class="tool-links">
+                            <a href="https://www.sans.org/tools/sift-workstation/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://github.com/teamdfir/sift" class="tool-link free" target="_blank">⚡ GitHub</a>
+                        </div>
+                    </div>
+                    <div class="tool-card" data-type="free">
+                        <h3>Security Onion</h3>
+                        <p>Linux distribution for intrusion detection and NSM</p>
+                        <div class="tool-links">
+                            <a href="https://securityonionsolutions.com/" class="tool-link" target="_blank">🔗 Official Site</a>
+                            <a href="https://github.com/Security-Onion-Solutions/securityonion" class="tool-link free" target="_blank">⚡ GitHub</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Search functionality
+        const searchBox = document.getElementById('searchBox');
+        const toolsContainer = document.getElementById('toolsContainer');
+        const categories = document.querySelectorAll('.category');
+        const toolCards = document.querySelectorAll('.tool-card');
+
+        searchBox.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            categories.forEach(category => {
+                const categoryName = category.querySelector('h2').textContent.toLowerCase();
+                const categoryTools = category.querySelectorAll('.tool-card');
+                let hasVisibleTools = false;
+                
+                categoryTools.forEach(tool => {
+                    const toolName = tool.querySelector('h3').textContent.toLowerCase();
+                    const toolDesc = tool.querySelector('p').textContent.toLowerCase();
+                    
+                    if (toolName.includes(searchTerm) || toolDesc.includes(searchTerm) || categoryName.includes(searchTerm)) {
+                        tool.style.display = 'block';
+                        hasVisibleTools = true;
+                    } else {
+                        tool.style.display = 'none';
+                    }
+                });
+                
+                category.style.display = hasVisibleTools ? 'block' : 'none';
+            });
+        });
+
+        // Filter functionality
+        function filterTools(filterType) {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            categories.forEach(category => {
+                const categoryTools = category.querySelectorAll('.tool-card');
+                let hasVisibleTools = false;
+                
+                categoryTools.forEach(tool => {
+                    const toolType = tool.getAttribute('data-type');
+                    
+                    if (filterType === 'all' || 
+                        (filterType === 'free' && toolType === 'free') ||
+                        (filterType === 'commercial' && toolType === 'commercial') ||
+                        (filterType === 'cloud' && toolType === 'cloud')) {
+                        tool.style.display = 'block';
+                        hasVisibleTools = true;
+                    } else {
+                        tool.style.display = 'none';
+                    }
+                });
+                
+                category.style.display = hasVisibleTools ? 'block' : 'none';
+            });
+        }
+
+        // Animate counters on page load
+        window.addEventListener('load', function() {
+            const statNumbers = document.querySelectorAll('.stat-number');
+            statNumbers.forEach(stat => {
+                if (stat.textContent.includes('+')) {
+                    const targetValue = parseInt(stat.textContent);
+                    animateCounter(stat, targetValue, '+');
+                }
+            });
+        });
+
+        function animateCounter(element, target, suffix = '') {
+            let current = 0;
+            const increment = target / 50;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.floor(current) + suffix;
+            }, 30);
+        }
+
+        // Add smooth scrolling to category links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'f') {
+                e.preventDefault();
+                searchBox.focus();
+            }
+        });
+    </script>
+</body>
+</html>
